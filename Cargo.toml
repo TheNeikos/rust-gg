@@ -1,0 +1,10 @@
+[package]
+name = "gg"
+version = "0.1.0"
+authors = ["Marcel Müller <neikos@neikos.email>"]
+
+[dependencies.glium]
+version = "0.9.2"
+
+[dependencies.time]
+version = "0.1"
