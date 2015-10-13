@@ -20,15 +20,15 @@ pub mod step {
     ///
     /// `step` is in nanoseconds.
     /// `cb` is a closure meant to return a `StepResult`
-    pub fn fixed<T>(step: u64,cb: T) where T: Fn(f64) -> StepResult
+    pub fn fixed<T>(step: u64, mut cb: T) where T: FnMut(f64) -> StepResult
     {
         let mut now = time::precise_time_ns();
         loop {
             if time::precise_time_ns() - now < step {
-                thread::sleep_ms((time::precise_time_ns() - now) as u32 / 1000);
+                thread::sleep_ms((step - (time::precise_time_ns() - now)) as u32 / 1000);
             }
-            let dt = now - time::precise_time_ns();
-            if let StepResult::Stop = cb(dt as f64 / 1.*100.*100.*100. as f64) {
+            let dt = time::precise_time_ns() - now;
+            if let StepResult::Stop = cb(dt as f64 / 1000_000_000. as f64) {
                 break;
             }
             now = time::precise_time_ns();
@@ -38,7 +38,34 @@ pub mod step {
     /// A curried version of `step::fixed`, trying to average 60 updates a
     /// second.
     /// See `step::fixed`
-    pub fn fixed_60<T>(cb: T) where T: Fn(f64) -> StepResult {
+    pub fn fixed_60<T>(cb: T) where T: FnMut(f64) -> StepResult {
         fixed(16666, cb)
+    }
+}
+
+mod test {
+    use super::{step, StepResult};
+    use time;
+
+    #[test]
+    fn test_fixed_step() {
+        let mut t = 0;
+        step::fixed(1000, |_dt| {
+            t = 1;
+            StepResult::Stop
+        });
+
+        assert_eq!(1, t);
+    }
+
+    #[test]
+    fn test_fixed_60_step() {
+        let mut t = 0;
+        step::fixed_60(|_dt| {
+            t = 1;
+            StepResult::Stop
+        });
+
+        assert_eq!(1, t);
     }
 }
