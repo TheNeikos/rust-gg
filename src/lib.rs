@@ -13,3 +13,5 @@ extern crate time;
 /// TODO: Expand
 pub mod event;
 
+/// The Scenes module
+pub mod scene;
