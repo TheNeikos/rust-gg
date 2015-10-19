@@ -11,6 +11,10 @@ pub enum SceneTransition<T> {
     /// `Pop` will remove the current Scene from the stack returning to the previous
     /// one.
     Pop,
+    /// `PopUntil` will remove scenes until the given scene is found, this is useful
+    /// to get back to a parent menu for example.
+    /// **This panics if the menu does not exist!**
+    PopUntil(usize)
 }
 
 /// One of the most important traits for a game, the scene is what tells the
