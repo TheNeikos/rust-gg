@@ -88,6 +88,9 @@ impl<T> SceneManager<T> for StackSceneManager<T> where T: Sized {
                 }
             },
             Pop => {
+                if let Some(s) = self.scenes.first_mut() {
+                    s.leave(&mut self.state);
+                }
                 self.scenes.pop();
             },
             PopUntil(id) => {
@@ -130,5 +133,115 @@ impl<T> SceneManager<T> for StackSceneManager<T> where T: Sized {
                 }
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use std::rc::Rc;
+    use std::cell::RefCell;
+    use glium::backend::glutin_backend::GlutinFacade;
+    use glium::glutin::HeadlessRendererBuilder;
+    use glium::DisplayBuild;
+
+    struct TestData {
+        has_been_modified: usize,
+        has_entered:       usize,
+        has_left:          usize,
+    }
+
+    type State = Rc<RefCell<TestData>>;
+
+    fn create_state() -> State {
+        Rc::new(RefCell::new(TestData {
+            has_been_modified: 0,
+            has_entered:       0,
+            has_left:          0,
+        }))
+    }
+
+    fn create_scene_manager(state: State) -> StackSceneManager<State> {
+        StackSceneManager {
+            scenes: Vec::new(),
+            state: state
+        }
+    }
+
+    fn create_display() -> GlutinFacade {
+        HeadlessRendererBuilder::new(1024, 768).build_glium().unwrap()
+    }
+
+    #[test]
+    fn enter_leave_scene_manager() {
+        struct TestScene;
+
+        impl Scene for TestScene {
+            type State = State;
+            fn enter(&mut self, data: &mut State) {
+                data.borrow_mut().has_entered += 1;
+            }
+            fn leave(&mut self, data: &mut State) {
+                data.borrow_mut().has_left += 1;
+            }
+            fn get_id(&self) -> usize {
+                0
+            }
+            fn tick(&mut self, data: &mut State) -> SceneTransition<State>
+            {
+                if data.borrow().has_been_modified > 0 {
+                    return SceneTransition::Pop
+                }
+
+                data.borrow_mut().has_been_modified = 1;
+                SceneTransition::Nothing
+            }
+        }
+
+        let mut state = create_state();
+        let mut mgr = create_scene_manager(state.clone());
+
+        mgr.handle_transition(SceneTransition::Push(Box::new(TestScene)));
+
+        assert_eq!(mgr.get_scenes().len(), 1);
+
+        let answer = mgr.get_scenes_mut().first_mut().unwrap().tick(&mut state);
+        mgr.handle_transition(answer);
+
+        assert_eq!(state.borrow().has_been_modified, 1);
+
+        let answer = mgr.get_scenes_mut().first_mut().unwrap().tick(&mut state);
+        mgr.handle_transition(answer);
+
+        assert_eq!(mgr.get_scenes().len(), 0);
+        assert_eq!(state.borrow().has_entered, 1);
+        assert_eq!(state.borrow().has_left, 1);
+    }
+
+    #[test]
+    fn fake_display() {
+        struct TestScene;
+
+        impl Scene for TestScene {
+            type State = State;
+            fn get_id(&self) -> usize {
+                0
+            }
+            fn display(&mut self, data: &mut Self::State, display: &GlutinFacade) {
+                use glium::Surface;
+                let mut frame = display.draw();
+                frame.clear_color(0.,1.,0.,1.0);
+                data.borrow_mut().has_been_modified = 1;
+                frame.finish().unwrap();
+            }
+        }
+        let mut state = create_state();
+        let display = create_display();
+
+        let mut scene = TestScene;
+
+        scene.display(&mut state, &display);
+
+        assert_eq!(state.borrow().has_been_modified, 1);
     }
 }
