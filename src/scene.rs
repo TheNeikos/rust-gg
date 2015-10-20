@@ -79,19 +79,18 @@ impl<T> SceneManager<T> for StackSceneManager<T> where T: Sized {
         match trans {
             Nothing => {},
             Push(boxed_scene) => {
-                if let Some(s) = self.scenes.first_mut() {
+                if let Some(s) = self.scenes.last_mut() {
                     s.leave(&mut self.state);
                 }
                 self.scenes.push(boxed_scene);
-                if let Some(s) = self.scenes.first_mut() {
+                if let Some(s) = self.scenes.last_mut() {
                     s.enter(&mut self.state);
                 }
             },
             Pop => {
-                if let Some(s) = self.scenes.first_mut() {
+                if let Some(mut s) = self.scenes.pop() {
                     s.leave(&mut self.state);
                 }
-                self.scenes.pop();
             },
             PopUntil(id) => {
                 // If we have just one or zero scenes we can simply panic.
@@ -108,12 +107,12 @@ impl<T> SceneManager<T> for StackSceneManager<T> where T: Sized {
                     panic!("Tried to pop until a nonexistant stack with 1 element.");
                 }
 
-                if let Some(s) = self.scenes.first_mut() {
+                if let Some(s) = self.scenes.last_mut() {
                     s.leave(&mut self.state);
                 }
 
                 while length > 0 {
-                    if let Some(k) = self.scenes.first().map(|s| s.get_id()) {
+                    if let Some(k) = self.scenes.last().map(|s| s.get_id()) {
                         if k == id {
                             break;
                         } else {
@@ -127,7 +126,7 @@ impl<T> SceneManager<T> for StackSceneManager<T> where T: Sized {
                 if length == 0 {
                     panic!("Emptied the stack in a PopUntil, use Quit instead if this is wanted.");
                 } else {
-                    if let Some(s) = self.scenes.first_mut() {
+                    if let Some(s) = self.scenes.last_mut() {
                         s.enter(&mut self.state);
                     }
                 }
@@ -205,12 +204,12 @@ mod test {
 
         assert_eq!(mgr.get_scenes().len(), 1);
 
-        let answer = mgr.get_scenes_mut().first_mut().unwrap().tick(&mut state);
+        let answer = mgr.get_scenes_mut().last_mut().unwrap().tick(&mut state);
         mgr.handle_transition(answer);
 
         assert_eq!(state.borrow().has_been_modified, 1);
 
-        let answer = mgr.get_scenes_mut().first_mut().unwrap().tick(&mut state);
+        let answer = mgr.get_scenes_mut().last_mut().unwrap().tick(&mut state);
         mgr.handle_transition(answer);
 
         assert_eq!(mgr.get_scenes().len(), 0);
@@ -244,4 +243,87 @@ mod test {
 
         assert_eq!(state.borrow().has_been_modified, 1);
     }
+
+    #[test]
+    fn popuntil_manager() {
+        struct TestScene;
+
+        impl Scene for TestScene {
+            type State = State;
+            fn get_id(&self) -> usize { 0 }
+            fn enter(&mut self, data: &mut State) {
+                data.borrow_mut().has_entered += 1;
+            }
+            fn leave(&mut self, data: &mut State) {
+                data.borrow_mut().has_left += 1;
+            }
+            fn tick(&mut self, _data: &mut State) -> SceneTransition<State>
+            {
+                SceneTransition::Push(Box::new(TestSceneMenu))
+            }
+        }
+
+        struct TestSceneMenu;
+
+        impl Scene for TestSceneMenu {
+            type State = State;
+            fn get_id(&self) -> usize { 1 }
+            fn enter(&mut self, data: &mut State) {
+                data.borrow_mut().has_entered += 1;
+            }
+            fn leave(&mut self, data: &mut State) {
+                data.borrow_mut().has_left += 1;
+            }
+            fn tick(&mut self, _data: &mut State) -> SceneTransition<State>
+            {
+                SceneTransition::Push(Box::new(TestSceneSubMenu))
+            }
+        }
+
+        struct TestSceneSubMenu;
+
+        impl Scene for TestSceneSubMenu {
+            type State = State;
+            fn get_id(&self) -> usize { 2 }
+            fn enter(&mut self, data: &mut State) {
+                data.borrow_mut().has_entered += 1;
+            }
+            fn leave(&mut self, data: &mut State) {
+                data.borrow_mut().has_left += 1;
+            }
+            fn tick(&mut self, _data: &mut State) -> SceneTransition<State>
+            {
+                SceneTransition::PopUntil(0)
+            }
+        }
+
+
+        let mut state = create_state();
+        let mut mgr = create_scene_manager(state.clone());
+
+        mgr.handle_transition(SceneTransition::Push(Box::new(TestScene)));
+
+        let answer = mgr.get_scenes_mut().last_mut().unwrap().tick(&mut state);
+        mgr.handle_transition(answer);
+
+        assert_eq!(mgr.get_scenes().len(), 2);
+
+        let answer = mgr.get_scenes_mut().last_mut().unwrap().tick(&mut state);
+        mgr.handle_transition(answer);
+
+        assert_eq!(mgr.get_scenes().len(), 3);
+
+        let answer = mgr.get_scenes_mut().last_mut().unwrap().tick(&mut state);
+        mgr.handle_transition(answer);
+
+        assert_eq!(mgr.get_scenes().len(), 1);
+
+        // TestScene -> Menu -> SubMenu -> TestScene
+        assert_eq!(state.borrow().has_entered, 4);
+
+        // TestScene -> Menu -> SubMenu
+        assert_eq!(state.borrow().has_left, 3);
+
+    }
+
 }
