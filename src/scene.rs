@@ -79,16 +79,16 @@ impl<T> SceneManager<T> for StackSceneManager<T> where T: Sized {
         match trans {
             Nothing => {},
             Push(boxed_scene) => {
-                if let Some(s) = self.scenes.first_mut() {
+                if let Some(s) = self.scenes.last_mut() {
                     s.leave(&mut self.state);
                 }
                 self.scenes.push(boxed_scene);
-                if let Some(s) = self.scenes.first_mut() {
+                if let Some(s) = self.scenes.last_mut() {
                     s.enter(&mut self.state);
                 }
             },
             Pop => {
-                if let Some(s) = self.scenes.first_mut() {
+                if let Some(s) = self.scenes.last_mut() {
                     s.leave(&mut self.state);
                 }
                 self.scenes.pop();
@@ -108,7 +108,7 @@ impl<T> SceneManager<T> for StackSceneManager<T> where T: Sized {
                     panic!("Tried to pop until a nonexistant stack with 1 element.");
                 }
 
-                if let Some(s) = self.scenes.first_mut() {
+                if let Some(s) = self.scenes.last_mut() {
                     s.leave(&mut self.state);
                 }
 
@@ -127,7 +127,7 @@ impl<T> SceneManager<T> for StackSceneManager<T> where T: Sized {
                 if length == 0 {
                     panic!("Emptied the stack in a PopUntil, use Quit instead if this is wanted.");
                 } else {
-                    if let Some(s) = self.scenes.first_mut() {
+                    if let Some(s) = self.scenes.last_mut() {
                         s.enter(&mut self.state);
                     }
                 }
@@ -205,12 +205,12 @@ mod test {
 
         assert_eq!(mgr.get_scenes().len(), 1);
 
-        let answer = mgr.get_scenes_mut().first_mut().unwrap().tick(&mut state);
+        let answer = mgr.get_scenes_mut().last_mut().unwrap().tick(&mut state);
         mgr.handle_transition(answer);
 
         assert_eq!(state.borrow().has_been_modified, 1);
 
-        let answer = mgr.get_scenes_mut().first_mut().unwrap().tick(&mut state);
+        let answer = mgr.get_scenes_mut().last_mut().unwrap().tick(&mut state);
         mgr.handle_transition(answer);
 
         assert_eq!(mgr.get_scenes().len(), 0);
