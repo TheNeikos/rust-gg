@@ -88,10 +88,9 @@ impl<T> SceneManager<T> for StackSceneManager<T> where T: Sized {
                 }
             },
             Pop => {
-                if let Some(s) = self.scenes.last_mut() {
+                if let Some(mut s) = self.scenes.pop() {
                     s.leave(&mut self.state);
                 }
-                self.scenes.pop();
             },
             PopUntil(id) => {
                 // If we have just one or zero scenes we can simply panic.
