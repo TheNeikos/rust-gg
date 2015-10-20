@@ -1,4 +1,18 @@
 
+/// Re-Export Glutin VirtualKeyCodes
+pub use glium::glutin::VirtualKeyCode as KeyCode;
+
+/// Holds state about the currently pressed buttons as well as buttons that just
+/// have been pressed and those that have been released.
+/// Sequence is as follows:
+///     1. Press
+///     2. Pressed
+///     3. Release
+///     4. Released
+///
+/// Per default all keys are 'Released'
+pub struct Keys;
+
 /// A StepResult should be returned by the closure given to one of the step
 /// functions.
 pub enum StepResult {
@@ -43,6 +57,7 @@ pub mod step {
     }
 }
 
+#[allow(unused_imports)]
 mod test {
     use super::{step, StepResult};
     use time;
