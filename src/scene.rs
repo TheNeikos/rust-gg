@@ -113,7 +113,7 @@ impl<T> SceneManager<T> for StackSceneManager<T> where T: Sized {
                 }
 
                 while length > 0 {
-                    if let Some(k) = self.scenes.first().map(|s| s.get_id()) {
+                    if let Some(k) = self.scenes.last().map(|s| s.get_id()) {
                         if k == id {
                             break;
                         } else {
