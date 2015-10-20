@@ -1,4 +1,4 @@
-image: neikos/rust:1.3
+image: neikos/rust:1.5
 env:
     - CARGO_TARGET_DIR=/var/cache/drone/cargo
     - CARGO_HOME=/var/cache/drone/cargo
