@@ -1,5 +1,6 @@
 use glium::backend::glutin_backend::GlutinFacade;
 use event::Keys;
+use traits::HasId;
 
 /// Signalling Enum, meant to tell the SceneManager what should happen next.
 pub enum SceneTransition<T : Sized> {
@@ -19,7 +20,7 @@ pub enum SceneTransition<T : Sized> {
 
 /// One of the most important traits for a game, the scene is what tells the
 /// display what to draw as well as what should happen with the given input.
-pub trait Scene {
+pub trait Scene : HasId {
     /// What kind of state is carried around?
     type State : Sized;
     /// Called everytime this scene becomes the top of the stack
@@ -37,15 +38,13 @@ pub trait Scene {
     {
         SceneTransition::Pop
     }
-    /// The id of a scene to identify it
-    fn get_id(&self) -> usize;
 }
 
 /// This trait has to be implemented by the SceneManager that will run your game.
 /// A sample implementation is `StackSceneManager`
 pub trait SceneManager<T : Sized> {
     /// The Associated Scene
-    type Scene : ?Sized = Scene<State=T>;
+    type Scene : ?Sized + HasId = Scene<State=T>;
     /// The Associated SceneTransition
     type SceneTransition = SceneTransition<T>;
 
@@ -144,6 +143,8 @@ mod test {
     use glium::glutin::HeadlessRendererBuilder;
     use glium::DisplayBuild;
 
+    use traits::HasId;
+
     struct TestData {
         has_been_modified: usize,
         has_entered:       usize,
@@ -175,6 +176,12 @@ mod test {
     fn enter_leave_scene_manager() {
         struct TestScene;
 
+        impl HasId for TestScene {
+            fn get_id(&self) -> usize {
+                0
+            }
+        }
+
         impl Scene for TestScene {
             type State = State;
             fn enter(&mut self, data: &mut State) {
@@ -182,9 +189,6 @@ mod test {
             }
             fn leave(&mut self, data: &mut State) {
                 data.borrow_mut().has_left += 1;
-            }
-            fn get_id(&self) -> usize {
-                0
             }
             fn tick(&mut self, data: &mut State) -> SceneTransition<State>
             {
@@ -221,11 +225,14 @@ mod test {
     fn fake_display() {
         struct TestScene;
 
-        impl Scene for TestScene {
-            type State = State;
+        impl HasId for TestScene {
             fn get_id(&self) -> usize {
                 0
             }
+        }
+
+        impl Scene for TestScene {
+            type State = State;
             fn display(&mut self, data: &mut Self::State, display: &GlutinFacade) {
                 use glium::Surface;
                 let mut frame = display.draw();
@@ -248,9 +255,14 @@ mod test {
     fn popuntil_manager() {
         struct TestScene;
 
+        impl HasId for TestScene {
+            fn get_id(&self) -> usize {
+                0
+            }
+        }
+
         impl Scene for TestScene {
             type State = State;
-            fn get_id(&self) -> usize { 0 }
             fn enter(&mut self, data: &mut State) {
                 data.borrow_mut().has_entered += 1;
             }
@@ -265,9 +277,14 @@ mod test {
 
         struct TestSceneMenu;
 
+        impl HasId for TestSceneMenu {
+            fn get_id(&self) -> usize {
+                1
+            }
+        }
+
         impl Scene for TestSceneMenu {
             type State = State;
-            fn get_id(&self) -> usize { 1 }
             fn enter(&mut self, data: &mut State) {
                 data.borrow_mut().has_entered += 1;
             }
@@ -282,9 +299,14 @@ mod test {
 
         struct TestSceneSubMenu;
 
+        impl HasId for TestSceneSubMenu {
+            fn get_id(&self) -> usize {
+                2
+            }
+        }
+
         impl Scene for TestSceneSubMenu {
             type State = State;
-            fn get_id(&self) -> usize { 2 }
             fn enter(&mut self, data: &mut State) {
                 data.borrow_mut().has_entered += 1;
             }
