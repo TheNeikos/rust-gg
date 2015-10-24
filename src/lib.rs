@@ -18,7 +18,12 @@ use glium::backend::glutin_backend::GlutinFacade;
 pub mod event;
 
 /// The Scenes module
+/// TODO: Expand
 pub mod scene;
+
+/// Commonly used traits
+/// TODO: Expand
+pub mod traits;
 
 /// The game object, you give it your initial State and start it off
 pub struct Game<T> {
