@@ -2,6 +2,12 @@
 name = "gg"
 version = "0.1.0"
 authors = ["Marcel Müller <neikos@neikos.email>"]
+description = "A simple Game Programming library, whose aim it is to get you going quickly, while then allowing to flesh out."
+repository = "https://github.com/TheNeikos/rust-gg"
+readme = "README.md"
+keywords = ["game", "game-design", "simple"]
+license = "LGPL-3.0"
+
 
 [dependencies.glium]
 version = "0.10.0"
