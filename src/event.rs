@@ -2,6 +2,20 @@
 /// Re-Export Glutin VirtualKeyCodes
 pub use glium::glutin::VirtualKeyCode as KeyCode;
 
+/// An enum allowing us to communicate what state a given Key is at. The `f64`
+/// in each variant tells you since when the key was last pressed. A value of 0
+/// indicating that it has never been pressed.
+pub enum KeyState {
+    /// The key has been pressed _this_ tick
+    Pressed(f64),
+    /// A key that has been held down for some time
+    Held(f64),
+    /// The key has just been released
+    Released(f64),
+    /// The Key is currently *not* pressed
+    NotPressed(f64)
+}
+
 /// Holds state about the currently pressed buttons as well as buttons that just
 /// have been pressed and those that have been released.
 /// Sequence is as follows:
