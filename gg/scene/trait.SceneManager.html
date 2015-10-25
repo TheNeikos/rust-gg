@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `SceneManager` trait in crate `gg`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, SceneManager">
+
+    <title>gg::scene::SceneManager - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../../main.css">
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'><a href='../index.html'>gg</a>::<wbr><a href='index.html'>scene</a></p><script>window.sidebarCurrent = {name: 'SceneManager', ty: 'trait', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content trait">
+<h1 class='fqn'><span class='in-band'>Trait <a href='../index.html'>gg</a>::<wbr><a href='index.html'>scene</a>::<wbr><a class='trait' href=''>SceneManager</a></span><span class='out-of-band'><span id='render-detail'>
+            <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                [<span class='inner'>&#x2212;</span>]
+            </a>
+        </span><a id='src-65' class='srclink' href='../../src/gg/scene.rs.html#45-57' title='goto source code'>[src]</a></span></h1>
+<pre class='rust trait'>pub trait SceneManager&lt;T: <a class='trait' href='https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>&gt; {
+    type Scene: ?<a class='trait' href='https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a> + <a class='trait' href='../../gg/traits/trait.HasId.html' title='gg::traits::HasId'>HasId</a> = <a class='trait' href='../../gg/scene/trait.Scene.html' title='gg::scene::Scene'>Scene</a>&lt;State=T&gt;;
+    type SceneTransition = <a class='enum' href='../../gg/scene/enum.SceneTransition.html' title='gg::scene::SceneTransition'>SceneTransition</a>&lt;T&gt;;
+    fn <a href='#tymethod.get_scenes' class='fnname'>get_scenes</a>(&amp;self) -&gt; &amp;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/alloc/boxed/struct.Box.html' title='alloc::boxed::Box'>Box</a>&lt;Self::<a class='trait' href='../../gg/scene/trait.SceneManager.html' title='gg::scene::SceneManager'>Scene</a>&gt;&gt;;
+    fn <a href='#tymethod.get_scenes_mut' class='fnname'>get_scenes_mut</a>(&amp;mut self) -&gt; &amp;mut <a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/alloc/boxed/struct.Box.html' title='alloc::boxed::Box'>Box</a>&lt;Self::<a class='trait' href='../../gg/scene/trait.SceneManager.html' title='gg::scene::SceneManager'>Scene</a>&gt;&gt;;
+    fn <a href='#tymethod.handle_transition' class='fnname'>handle_transition</a>(&amp;mut self, Self::<a class='trait' href='../../gg/scene/trait.SceneManager.html' title='gg::scene::SceneManager'>SceneTransition</a>);
+}</pre><div class='docblock'><p>This trait has to be implemented by the SceneManager that will run your game.
+A sample implementation is <code>StackSceneManager</code></p>
+</div>
+            <h2 id='associated-types'>Associated Types</h2>
+            <div class='methods'>
+        <h3 id='associatedtype.Scene' class='method stab '><code>type Scene: ?<a class='trait' href='https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a> + <a class='trait' href='../../gg/traits/trait.HasId.html' title='gg::traits::HasId'>HasId</a> = <a class='trait' href='../../gg/scene/trait.Scene.html' title='gg::scene::Scene'>Scene</a>&lt;State=T&gt;</code></h3><div class='docblock'><p>The Associated Scene</p>
+</div><h3 id='associatedtype.SceneTransition' class='method stab '><code>type SceneTransition = <a class='enum' href='../../gg/scene/enum.SceneTransition.html' title='gg::scene::SceneTransition'>SceneTransition</a>&lt;T&gt;</code></h3><div class='docblock'><p>The Associated SceneTransition</p>
+</div></div>
+            <h2 id='required-methods'>Required Methods</h2>
+            <div class='methods'>
+        <h3 id='tymethod.get_scenes' class='method stab '><code>fn <a href='#tymethod.get_scenes' class='fnname'>get_scenes</a>(&amp;self) -&gt; &amp;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/alloc/boxed/struct.Box.html' title='alloc::boxed::Box'>Box</a>&lt;Self::<a class='trait' href='../../gg/scene/trait.SceneManager.html' title='gg::scene::SceneManager'>Scene</a>&gt;&gt;</code></h3><div class='docblock'><p>Return the scenes as non-mut references</p>
+</div><h3 id='tymethod.get_scenes_mut' class='method stab '><code>fn <a href='#tymethod.get_scenes_mut' class='fnname'>get_scenes_mut</a>(&amp;mut self) -&gt; &amp;mut <a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/alloc/boxed/struct.Box.html' title='alloc::boxed::Box'>Box</a>&lt;Self::<a class='trait' href='../../gg/scene/trait.SceneManager.html' title='gg::scene::SceneManager'>Scene</a>&gt;&gt;</code></h3><div class='docblock'><p>Return the scenes as mut references</p>
+</div><h3 id='tymethod.handle_transition' class='method stab '><code>fn <a href='#tymethod.handle_transition' class='fnname'>handle_transition</a>(&amp;mut self, Self::<a class='trait' href='../../gg/scene/trait.SceneManager.html' title='gg::scene::SceneManager'>SceneTransition</a>)</code></h3><div class='docblock'><p>Make the manager handle a given transition.</p>
+</div></div>
+        <h2 id='implementors'>Implementors</h2>
+        <ul class='item-list' id='implementors-list'>
+    <li><code>impl&lt;T&gt; <a class='trait' href='../../gg/scene/trait.SceneManager.html' title='gg::scene::SceneManager'>SceneManager</a>&lt;T&gt; for <a class='struct' href='../../gg/scene/struct.StackSceneManager.html' title='gg::scene::StackSceneManager'>StackSceneManager</a>&lt;T&gt; <span class='where'>where T: <a class='trait' href='https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a></span></code></li>
+</ul><script type="text/javascript" async
+                              src="../../implementors/gg/scene/trait.SceneManager.js">
+                      </script></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../../";
+        window.currentCrate = "gg";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../../jquery.js"></script>
+    <script src="../../main.js"></script>
+    
+    <script async src="../../search-index.js"></script>
+</body>
+</html>
