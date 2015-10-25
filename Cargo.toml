@@ -14,3 +14,6 @@ version = "0.10.0"
 
 [dependencies.time]
 version = "0.1"
+
+[dependencies.vec_map]
+version = "0.3"

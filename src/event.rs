@@ -1,3 +1,4 @@
+use vec_map::VecMap;
 
 /// Re-Export Glutin VirtualKeyCodes
 pub use glium::glutin::VirtualKeyCode as KeyCode;
@@ -17,15 +18,18 @@ pub enum KeyState {
 }
 
 /// Holds state about the currently pressed buttons as well as buttons that just
-/// have been pressed and those that have been released.
+/// have been pressed and those that are released.
 /// Sequence is as follows:
-///     1. Press
-///     2. Pressed
-///     3. Release
-///     4. Released
+///     1. Released
+///     2. Press
+///     3. Pressed
+///     4. Release
+///     5. goto: 1
 ///
 /// Per default all keys are 'Released'
-pub struct Keys;
+pub struct Keys {
+    keys: VecMap<KeyState>
+}
 
 /// A StepResult should be returned by the closure given to one of the step
 /// functions.

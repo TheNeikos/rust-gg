@@ -10,6 +10,7 @@
 
 extern crate glium;
 extern crate time;
+extern crate vec_map;
 
 use glium::backend::glutin_backend::GlutinFacade;
 
