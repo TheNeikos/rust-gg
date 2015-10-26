@@ -34,7 +34,7 @@ pub trait Scene : HasId {
     /// Called with a display to draw into something
     fn display(&mut self, _state: &mut Self::State, _display: &GlutinFacade) {}
     /// Called to update the state so as to reflect one advancement in time.
-    fn tick(&mut self, _state: &mut Self::State) -> SceneTransition<Self::State>
+    fn tick(&mut self, _state: &mut Self::State, _dt: f64) -> SceneTransition<Self::State>
     {
         SceneTransition::Pop
     }
@@ -213,7 +213,7 @@ mod test {
             fn leave(&mut self, data: &mut State) {
                 data.borrow_mut().has_left += 1;
             }
-            fn tick(&mut self, data: &mut State) -> SceneTransition<State>
+            fn tick(&mut self, data: &mut State, _dt: f64) -> SceneTransition<State>
             {
                 if data.borrow().has_been_modified > 0 {
                     return SceneTransition::Pop
@@ -231,12 +231,12 @@ mod test {
 
         assert_eq!(mgr.get_scenes().len(), 1);
 
-        let answer = mgr.get_scenes_mut().last_mut().unwrap().tick(&mut state);
+        let answer = mgr.get_scenes_mut().last_mut().unwrap().tick(&mut state, 0.0);
         mgr.handle_transition(answer);
 
         assert_eq!(state.borrow().has_been_modified, 1);
 
-        let answer = mgr.get_scenes_mut().last_mut().unwrap().tick(&mut state);
+        let answer = mgr.get_scenes_mut().last_mut().unwrap().tick(&mut state, 0.0);
         mgr.handle_transition(answer);
 
         assert_eq!(mgr.get_scenes().len(), 0);
@@ -292,7 +292,7 @@ mod test {
             fn leave(&mut self, data: &mut State) {
                 data.borrow_mut().has_left += 1;
             }
-            fn tick(&mut self, _data: &mut State) -> SceneTransition<State>
+            fn tick(&mut self, _data: &mut State, _dt: f64) -> SceneTransition<State>
             {
                 SceneTransition::Push(Box::new(TestSceneMenu))
             }
@@ -314,7 +314,7 @@ mod test {
             fn leave(&mut self, data: &mut State) {
                 data.borrow_mut().has_left += 1;
             }
-            fn tick(&mut self, _data: &mut State) -> SceneTransition<State>
+            fn tick(&mut self, _data: &mut State, _dt: f64) -> SceneTransition<State>
             {
                 SceneTransition::Push(Box::new(TestSceneSubMenu))
             }
@@ -336,7 +336,7 @@ mod test {
             fn leave(&mut self, data: &mut State) {
                 data.borrow_mut().has_left += 1;
             }
-            fn tick(&mut self, _data: &mut State) -> SceneTransition<State>
+            fn tick(&mut self, _data: &mut State, _dt: f64) -> SceneTransition<State>
             {
                 SceneTransition::PopUntil(0)
             }
@@ -348,17 +348,17 @@ mod test {
 
         mgr.handle_transition(SceneTransition::Push(Box::new(TestScene)));
 
-        let answer = mgr.get_scenes_mut().last_mut().unwrap().tick(&mut state);
+        let answer = mgr.get_scenes_mut().last_mut().unwrap().tick(&mut state, 0.0);
         mgr.handle_transition(answer);
 
         assert_eq!(mgr.get_scenes().len(), 2);
 
-        let answer = mgr.get_scenes_mut().last_mut().unwrap().tick(&mut state);
+        let answer = mgr.get_scenes_mut().last_mut().unwrap().tick(&mut state, 0.0);
         mgr.handle_transition(answer);
 
         assert_eq!(mgr.get_scenes().len(), 3);
 
-        let answer = mgr.get_scenes_mut().last_mut().unwrap().tick(&mut state);
+        let answer = mgr.get_scenes_mut().last_mut().unwrap().tick(&mut state, 0.0);
         mgr.handle_transition(answer);
 
         assert_eq!(mgr.get_scenes().len(), 1);
