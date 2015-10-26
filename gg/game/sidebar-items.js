@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Game","The game object, you give it your initial State and start it off"]]});

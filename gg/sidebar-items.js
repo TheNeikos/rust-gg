@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["event","The event module TODO: Expand"],["scene","The Scenes module TODO: Expand"],["traits","Commonly used traits TODO: Expand"]],"struct":[["Game","The game object, you give it your initial State and start it off"]]});
+initSidebarItems({"mod":[["event","The event module TODO: Expand"],["game","Global game related TODO: Expand"],["scene","The Scenes module TODO: Expand"],["traits","Commonly used traits TODO: Expand"]]});

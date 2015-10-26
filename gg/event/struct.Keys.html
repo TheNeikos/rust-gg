@@ -45,17 +45,34 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-10' class='srclink' href='../../src/gg/event.rs.html#14' title='goto source code'>[src]</a></span></h1>
-<pre class='rust struct'>pub struct Keys;</pre><div class='docblock'><p>Holds state about the currently pressed buttons as well as buttons that just
-have been pressed and those that have been released.
+        </span><a id='src-37' class='srclink' href='../../src/gg/event.rs.html#32-34' title='goto source code'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct Keys {
+    // some fields omitted
+}</pre><div class='docblock'><p>Holds state about the currently pressed buttons as well as buttons that just
+have been pressed and those that are released.
 Sequence is as follows:
-    1. Press
-    2. Pressed
-    3. Release
-    4. Released</p>
+    1. Released
+    2. Press
+    3. Pressed
+    4. Release
+    5. goto: 1</p>
 
 <p>Per default all keys are &#39;Released&#39;</p>
-</div></section>
+</div><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl <a class='struct' href='../../gg/event/struct.Keys.html' title='gg::event::Keys'>Keys</a></code></h3><div class='impl-items'><h4 id='method.status' class='method'><code>fn <a href='#method.status' class='fnname'>status</a>(&amp;self, key: <a class='enum' href='../../gg/event/enum.KeyCode.html' title='gg::event::KeyCode'>KeyCode</a>) -&gt; <a class='enum' href='../../gg/event/enum.KeyState.html' title='gg::event::KeyState'>KeyState</a></code></h4>
+<div class='docblock'><p>Gives you the KeyState of a given Key</p>
+</div><h4 id='method.held' class='method'><code>fn <a href='#method.held' class='fnname'>held</a>(&amp;self, key: <a class='enum' href='../../gg/event/enum.KeyCode.html' title='gg::event::KeyCode'>KeyCode</a>) -&gt; <a href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h4>
+<div class='docblock'><p>A quick way to check if a given key is pressed or held</p>
+</div><h4 id='method.pressed' class='method'><code>fn <a href='#method.pressed' class='fnname'>pressed</a>(&amp;self, key: <a class='enum' href='../../gg/event/enum.KeyCode.html' title='gg::event::KeyCode'>KeyCode</a>) -&gt; <a href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h4>
+<div class='docblock'><p>A quick way to check if a given key has just been pressed</p>
+</div><h4 id='method.not_pressed' class='method'><code>fn <a href='#method.not_pressed' class='fnname'>not_pressed</a>(&amp;self, key: <a class='enum' href='../../gg/event/enum.KeyCode.html' title='gg::event::KeyCode'>KeyCode</a>) -&gt; <a href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h4>
+<div class='docblock'><p>A quick way to check if a given key is released</p>
+</div><h4 id='method.new' class='method'><code>fn <a href='#method.new' class='fnname'>new</a>() -&gt; <a class='struct' href='../../gg/event/struct.Keys.html' title='gg::event::Keys'>Keys</a></code></h4>
+<div class='docblock'><p>Creates a new keys struct</p>
+</div><h4 id='method.update_key' class='method'><code>fn <a href='#method.update_key' class='fnname'>update_key</a>(&amp;mut self, key: <a class='enum' href='../../gg/event/enum.KeyCode.html' title='gg::event::KeyCode'>KeyCode</a>, state: <a class='enum' href='../../glutin/events/enum.ElementState.html' title='glutin::events::ElementState'>ElementState</a>, time: <a href='https://doc.rust-lang.org/nightly/std/primitive.f64.html'>f64</a>)</code></h4>
+<div class='docblock'><p>Update a given key with a given state</p>
+</div><h4 id='method.update' class='method'><code>fn <a href='#method.update' class='fnname'>update</a>(&amp;mut self, time: <a href='https://doc.rust-lang.org/nightly/std/primitive.f64.html'>f64</a>)</code></h4>
+<div class='docblock'><p>Update all the keys and advance them to the next step</p>
+</div></div></section>
     <section id='search' class="content hidden"></section>
 
     <section class="footer"></section>

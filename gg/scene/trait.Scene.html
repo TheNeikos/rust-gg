@@ -45,20 +45,20 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-46' class='srclink' href='../../src/gg/scene.rs.html#23-41' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-110' class='srclink' href='../../src/gg/scene.rs.html#23-41' title='goto source code'>[src]</a></span></h1>
 <pre class='rust trait'>pub trait Scene: <a class='trait' href='../../gg/traits/trait.HasId.html' title='gg::traits::HasId'>HasId</a> {
-    type State: <a class='trait' href='https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a>;
+    type State: <a class='trait' href='https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a> + <a class='trait' href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a>;
     fn <a href='#method.enter' class='fnname'>enter</a>(&amp;mut self, _state: &amp;mut Self::<a class='trait' href='../../gg/scene/trait.Scene.html' title='gg::scene::Scene'>State</a>) { ... }
     fn <a href='#method.leave' class='fnname'>leave</a>(&amp;mut self, _state: &amp;mut Self::<a class='trait' href='../../gg/scene/trait.Scene.html' title='gg::scene::Scene'>State</a>) { ... }
     fn <a href='#method.keypress' class='fnname'>keypress</a>(&amp;mut self, _state: &amp;mut Self::<a class='trait' href='../../gg/scene/trait.Scene.html' title='gg::scene::Scene'>State</a>, _keys: &amp;<a class='struct' href='../../gg/event/struct.Keys.html' title='gg::event::Keys'>Keys</a>) { ... }
     fn <a href='#method.display' class='fnname'>display</a>(&amp;mut self, _state: &amp;mut Self::<a class='trait' href='../../gg/scene/trait.Scene.html' title='gg::scene::Scene'>State</a>, _display: &amp;<a class='struct' href='../../glium/backend/glutin_backend/struct.GlutinFacade.html' title='glium::backend::glutin_backend::GlutinFacade'>GlutinFacade</a>) { ... }
-    fn <a href='#method.tick' class='fnname'>tick</a>(&amp;mut self, _state: &amp;mut Self::<a class='trait' href='../../gg/scene/trait.Scene.html' title='gg::scene::Scene'>State</a>) -&gt; <a class='enum' href='../../gg/scene/enum.SceneTransition.html' title='gg::scene::SceneTransition'>SceneTransition</a>&lt;Self::<a class='trait' href='../../gg/scene/trait.Scene.html' title='gg::scene::Scene'>State</a>&gt; { ... }
+    fn <a href='#method.tick' class='fnname'>tick</a>(&amp;mut self, _state: &amp;mut Self::<a class='trait' href='../../gg/scene/trait.Scene.html' title='gg::scene::Scene'>State</a>, _dt: <a href='https://doc.rust-lang.org/nightly/std/primitive.f64.html'>f64</a>) -&gt; <a class='enum' href='../../gg/scene/enum.SceneTransition.html' title='gg::scene::SceneTransition'>SceneTransition</a>&lt;Self::<a class='trait' href='../../gg/scene/trait.Scene.html' title='gg::scene::Scene'>State</a>&gt; { ... }
 }</pre><div class='docblock'><p>One of the most important traits for a game, the scene is what tells the
 display what to draw as well as what should happen with the given input.</p>
 </div>
             <h2 id='associated-types'>Associated Types</h2>
             <div class='methods'>
-        <h3 id='associatedtype.State' class='method stab '><code>type State: <a class='trait' href='https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a></code></h3><div class='docblock'><p>What kind of state is carried around?</p>
+        <h3 id='associatedtype.State' class='method stab '><code>type State: <a class='trait' href='https://doc.rust-lang.org/nightly/core/marker/trait.Sized.html' title='core::marker::Sized'>Sized</a> + <a class='trait' href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a></code></h3><div class='docblock'><p>What kind of state is carried around?</p>
 </div></div>
             <h2 id='provided-methods'>Provided Methods</h2>
             <div class='methods'>
@@ -68,7 +68,7 @@ before a drop)</p>
 </div><h3 id='method.keypress' class='method stab '><code>fn <a href='#method.keypress' class='fnname'>keypress</a>(&amp;mut self, _state: &amp;mut Self::<a class='trait' href='../../gg/scene/trait.Scene.html' title='gg::scene::Scene'>State</a>, _keys: &amp;<a class='struct' href='../../gg/event/struct.Keys.html' title='gg::event::Keys'>Keys</a>)</code></h3><div class='docblock'><p>Convenience method where you can handle keyboard input specifically.
 This is called <em>before</em> <code>tick</code>.</p>
 </div><h3 id='method.display' class='method stab '><code>fn <a href='#method.display' class='fnname'>display</a>(&amp;mut self, _state: &amp;mut Self::<a class='trait' href='../../gg/scene/trait.Scene.html' title='gg::scene::Scene'>State</a>, _display: &amp;<a class='struct' href='../../glium/backend/glutin_backend/struct.GlutinFacade.html' title='glium::backend::glutin_backend::GlutinFacade'>GlutinFacade</a>)</code></h3><div class='docblock'><p>Called with a display to draw into something</p>
-</div><h3 id='method.tick' class='method stab '><code>fn <a href='#method.tick' class='fnname'>tick</a>(&amp;mut self, _state: &amp;mut Self::<a class='trait' href='../../gg/scene/trait.Scene.html' title='gg::scene::Scene'>State</a>) -&gt; <a class='enum' href='../../gg/scene/enum.SceneTransition.html' title='gg::scene::SceneTransition'>SceneTransition</a>&lt;Self::<a class='trait' href='../../gg/scene/trait.Scene.html' title='gg::scene::Scene'>State</a>&gt;</code></h3><div class='docblock'><p>Called to update the state so as to reflect one advancement in time.</p>
+</div><h3 id='method.tick' class='method stab '><code>fn <a href='#method.tick' class='fnname'>tick</a>(&amp;mut self, _state: &amp;mut Self::<a class='trait' href='../../gg/scene/trait.Scene.html' title='gg::scene::Scene'>State</a>, _dt: <a href='https://doc.rust-lang.org/nightly/std/primitive.f64.html'>f64</a>) -&gt; <a class='enum' href='../../gg/scene/enum.SceneTransition.html' title='gg::scene::SceneTransition'>SceneTransition</a>&lt;Self::<a class='trait' href='../../gg/scene/trait.Scene.html' title='gg::scene::Scene'>State</a>&gt;</code></h3><div class='docblock'><p>Called to update the state so as to reflect one advancement in time.</p>
 </div></div>
         <h2 id='implementors'>Implementors</h2>
         <ul class='item-list' id='implementors-list'>

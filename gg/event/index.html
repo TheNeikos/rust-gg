@@ -45,7 +45,7 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-7' class='srclink' href='../../src/gg/event.rs.html#2-86' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-7' class='srclink' href='../../src/gg/event.rs.html#1-182' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>The event module
 TODO: Expand</p>
 </div><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
@@ -66,12 +66,13 @@ event loop going.</p>
                                title='gg::event::Keys'>Keys</a></td>
                         <td class='docblock short'>
                              <p>Holds state about the currently pressed buttons as well as buttons that just
-have been pressed and those that have been released.
+have been pressed and those that are released.
 Sequence is as follows:
-    1. Press
-    2. Pressed
-    3. Release
-    4. Released</p>
+    1. Released
+    2. Press
+    3. Pressed
+    4. Release
+    5. goto: 1</p>
 
                         </td>
                     </tr>
@@ -82,6 +83,17 @@ Sequence is as follows:
                                title='gg::event::KeyCode'>KeyCode</a></td>
                         <td class='docblock short'>
                              
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='enum' href='enum.KeyState.html'
+                               title='gg::event::KeyState'>KeyState</a></td>
+                        <td class='docblock short'>
+                             <p>An enum allowing us to communicate what state a given Key is at. The <code>f64</code>
+in each variant tells you since when the key was last pressed. A value of 0
+indicating that it has never been pressed.</p>
+
                         </td>
                     </tr>
                 

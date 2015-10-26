@@ -71,9 +71,6 @@
 <span id="29">29</span>
 <span id="30">30</span>
 <span id="31">31</span>
-<span id="32">32</span>
-<span id="33">33</span>
-<span id="34">34</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//!</span>
 <span class='doccomment'>//! # GG</span>
@@ -87,8 +84,7 @@
 
 <span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>glium</span>;
 <span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>time</span>;
-
-<span class='kw'>use</span> <span class='ident'>glium</span>::<span class='ident'>backend</span>::<span class='ident'>glutin_backend</span>::<span class='ident'>GlutinFacade</span>;
+<span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>vec_map</span>;
 
 <span class='doccomment'>/// The event module</span>
 <span class='doccomment'>/// TODO: Expand</span>
@@ -102,13 +98,11 @@
 <span class='doccomment'>/// TODO: Expand</span>
 <span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>traits</span>;
 
-<span class='doccomment'>/// The game object, you give it your initial State and start it off</span>
-<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Game</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> {
-    <span class='doccomment'>/// Your own state</span>
-    <span class='ident'>state</span>: <span class='ident'>T</span>,
-    <span class='doccomment'>/// The display handle</span>
-    <span class='ident'>display</span>: <span class='ident'>GlutinFacade</span>
-}
+<span class='doccomment'>/// Global game related</span>
+<span class='doccomment'>/// TODO: Expand</span>
+<span class='kw'>pub</span> <span class='kw'>mod</span> <span class='ident'>game</span>;
+
+<span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>game</span>::<span class='ident'>Game</span>;
 </pre>
 </section>
     <section id='search' class="content hidden"></section>

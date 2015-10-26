@@ -391,6 +391,44 @@
 <span id="349">349</span>
 <span id="350">350</span>
 <span id="351">351</span>
+<span id="352">352</span>
+<span id="353">353</span>
+<span id="354">354</span>
+<span id="355">355</span>
+<span id="356">356</span>
+<span id="357">357</span>
+<span id="358">358</span>
+<span id="359">359</span>
+<span id="360">360</span>
+<span id="361">361</span>
+<span id="362">362</span>
+<span id="363">363</span>
+<span id="364">364</span>
+<span id="365">365</span>
+<span id="366">366</span>
+<span id="367">367</span>
+<span id="368">368</span>
+<span id="369">369</span>
+<span id="370">370</span>
+<span id="371">371</span>
+<span id="372">372</span>
+<span id="373">373</span>
+<span id="374">374</span>
+<span id="375">375</span>
+<span id="376">376</span>
+<span id="377">377</span>
+<span id="378">378</span>
+<span id="379">379</span>
+<span id="380">380</span>
+<span id="381">381</span>
+<span id="382">382</span>
+<span id="383">383</span>
+<span id="384">384</span>
+<span id="385">385</span>
+<span id="386">386</span>
+<span id="387">387</span>
+<span id="388">388</span>
+<span id="389">389</span>
 </pre><pre class='rust '>
 <span class='kw'>use</span> <span class='ident'>glium</span>::<span class='ident'>backend</span>::<span class='ident'>glutin_backend</span>::<span class='ident'>GlutinFacade</span>;
 <span class='kw'>use</span> <span class='ident'>event</span>::<span class='ident'>Keys</span>;
@@ -416,7 +454,7 @@
 <span class='doccomment'>/// display what to draw as well as what should happen with the given input.</span>
 <span class='kw'>pub</span> <span class='kw'>trait</span> <span class='ident'>Scene</span> : <span class='ident'>HasId</span> {
     <span class='doccomment'>/// What kind of state is carried around?</span>
-    <span class='kw'>type</span> <span class='ident'>State</span> : <span class='ident'>Sized</span>;
+    <span class='kw'>type</span> <span class='ident'>State</span> : <span class='ident'>Sized</span> <span class='op'>+</span> <span class='ident'>Clone</span>;
     <span class='doccomment'>/// Called everytime this scene becomes the top of the stack</span>
     <span class='kw'>fn</span> <span class='ident'>enter</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>_state</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>Self</span>::<span class='ident'>State</span>) {}
     <span class='doccomment'>/// Called everytime this scene stops being the top of the stack (also</span>
@@ -428,7 +466,7 @@
     <span class='doccomment'>/// Called with a display to draw into something</span>
     <span class='kw'>fn</span> <span class='ident'>display</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>_state</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>Self</span>::<span class='ident'>State</span>, <span class='ident'>_display</span>: <span class='kw-2'>&amp;</span><span class='ident'>GlutinFacade</span>) {}
     <span class='doccomment'>/// Called to update the state so as to reflect one advancement in time.</span>
-    <span class='kw'>fn</span> <span class='ident'>tick</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>_state</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>Self</span>::<span class='ident'>State</span>) <span class='op'>-&gt;</span> <span class='ident'>SceneTransition</span><span class='op'>&lt;</span><span class='ident'>Self</span>::<span class='ident'>State</span><span class='op'>&gt;</span>
+    <span class='kw'>fn</span> <span class='ident'>tick</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>_state</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>Self</span>::<span class='ident'>State</span>, <span class='ident'>_dt</span>: <span class='ident'>f64</span>) <span class='op'>-&gt;</span> <span class='ident'>SceneTransition</span><span class='op'>&lt;</span><span class='ident'>Self</span>::<span class='ident'>State</span><span class='op'>&gt;</span>
     {
         <span class='ident'>SceneTransition</span>::<span class='ident'>Pop</span>
     }
@@ -448,17 +486,40 @@
     <span class='kw'>fn</span> <span class='ident'>get_scenes_mut</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>Box</span><span class='op'>&lt;</span><span class='ident'>Self</span>::<span class='ident'>Scene</span><span class='op'>&gt;&gt;</span>;
     <span class='doccomment'>/// Make the manager handle a given transition.</span>
     <span class='kw'>fn</span> <span class='ident'>handle_transition</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>Self</span>::<span class='ident'>SceneTransition</span>);
+    <span class='doccomment'>/// Update the scene/s</span>
+    <span class='kw'>fn</span> <span class='ident'>update</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>dt</span>: <span class='ident'>f64</span>, <span class='ident'>keys</span>: <span class='kw-2'>&amp;</span><span class='ident'>Keys</span>);
+    <span class='doccomment'>/// Display the scene/s</span>
+    <span class='kw'>fn</span> <span class='ident'>display</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>display</span>: <span class='kw-2'>&amp;</span><span class='ident'>GlutinFacade</span>);
 }
 
 <span class='doccomment'>/// A sample implementation of `SceneManager` can be used as is for a stack</span>
 <span class='doccomment'>/// based scene system. The type parameter is the state of the game.</span>
-<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>StackSceneManager</span><span class='op'>&lt;</span><span class='ident'>T</span> : <span class='ident'>Sized</span><span class='op'>&gt;</span> {
+<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>StackSceneManager</span><span class='op'>&lt;</span><span class='ident'>T</span> : <span class='ident'>Sized</span> <span class='op'>+</span> <span class='ident'>Clone</span><span class='op'>&gt;</span> {
     <span class='doccomment'>/// The scenes inside the manager.</span>
     <span class='ident'>scenes</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>Box</span><span class='op'>&lt;</span><span class='ident'>Scene</span><span class='op'>&lt;</span><span class='ident'>State</span><span class='op'>=</span><span class='ident'>T</span><span class='op'>&gt;&gt;</span><span class='op'>&gt;</span>,
     <span class='ident'>state</span>: <span class='ident'>T</span>
 }
 
-<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> <span class='ident'>SceneManager</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>StackSceneManager</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> <span class='kw'>where</span> <span class='ident'>T</span>: <span class='ident'>Sized</span> {
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>T</span>: <span class='ident'>Clone</span><span class='op'>&gt;</span> <span class='ident'>StackSceneManager</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> {
+    <span class='doccomment'>/// Creates a new StackSceneManager. It has nothing in it,</span>
+    <span class='doccomment'>/// you probably want to use `with_scene`</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>state</span>: <span class='ident'>T</span>) <span class='op'>-&gt;</span> <span class='ident'>StackSceneManager</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> {
+        <span class='ident'>StackSceneManager</span> {
+            <span class='ident'>scenes</span>: <span class='ident'>Vec</span>::<span class='ident'>new</span>(),
+            <span class='ident'>state</span>: <span class='ident'>state</span>
+        }
+    }
+
+    <span class='doccomment'>/// Creates a StackSceneManager with</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>with_scene</span>(<span class='ident'>state</span>: <span class='ident'>T</span>, <span class='ident'>scene</span>: <span class='ident'>Box</span><span class='op'>&lt;</span><span class='ident'>Scene</span><span class='op'>&lt;</span><span class='ident'>State</span><span class='op'>=</span><span class='ident'>T</span><span class='op'>&gt;&gt;</span>) <span class='op'>-&gt;</span> <span class='ident'>StackSceneManager</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span>
+    {
+        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>m</span> <span class='op'>=</span> <span class='ident'>StackSceneManager</span>::<span class='ident'>new</span>(<span class='ident'>state</span>);
+        <span class='ident'>m</span>.<span class='ident'>handle_transition</span>(<span class='ident'>SceneTransition</span>::<span class='ident'>Push</span>(<span class='ident'>scene</span>));
+        <span class='ident'>m</span>
+    }
+}
+
+<span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> <span class='ident'>SceneManager</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>StackSceneManager</span><span class='op'>&lt;</span><span class='ident'>T</span><span class='op'>&gt;</span> <span class='kw'>where</span> <span class='ident'>T</span>: <span class='ident'>Sized</span> <span class='op'>+</span> <span class='ident'>Clone</span> {
     <span class='kw'>fn</span> <span class='ident'>get_scenes</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>Box</span><span class='op'>&lt;</span><span class='ident'>Self</span>::<span class='ident'>Scene</span><span class='op'>&gt;&gt;</span> {
         <span class='kw'>return</span> <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>scenes</span>;
     }
@@ -526,6 +587,21 @@
             }
         }
     }
+
+    <span class='kw'>fn</span> <span class='ident'>update</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>dt</span>: <span class='ident'>f64</span>, <span class='ident'>keys</span>: <span class='kw-2'>&amp;</span><span class='ident'>Keys</span>) {
+        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>state</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>state</span>.<span class='ident'>clone</span>();
+        <span class='self'>self</span>.<span class='ident'>get_scenes_mut</span>().<span class='ident'>last_mut</span>()
+            .<span class='ident'>unwrap</span>().<span class='ident'>keypress</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>state</span>, <span class='ident'>keys</span>);
+        <span class='kw'>let</span> <span class='ident'>answer</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>get_scenes_mut</span>().<span class='ident'>last_mut</span>()
+            .<span class='ident'>unwrap</span>().<span class='ident'>tick</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>state</span>, <span class='ident'>dt</span>);
+        <span class='self'>self</span>.<span class='ident'>handle_transition</span>(<span class='ident'>answer</span>);
+    }
+
+    <span class='kw'>fn</span> <span class='ident'>display</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>display</span>: <span class='kw-2'>&amp;</span><span class='ident'>GlutinFacade</span>) {
+        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>state</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>state</span>.<span class='ident'>clone</span>();
+        <span class='self'>self</span>.<span class='ident'>get_scenes_mut</span>().<span class='ident'>last_mut</span>()
+            .<span class='ident'>unwrap</span>().<span class='ident'>display</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>state</span>, <span class='ident'>display</span>);
+    }
 }
 
 <span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>test</span>)]</span>
@@ -584,7 +660,7 @@
             <span class='kw'>fn</span> <span class='ident'>leave</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>data</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>State</span>) {
                 <span class='ident'>data</span>.<span class='ident'>borrow_mut</span>().<span class='ident'>has_left</span> <span class='op'>+=</span> <span class='number'>1</span>;
             }
-            <span class='kw'>fn</span> <span class='ident'>tick</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>data</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>State</span>) <span class='op'>-&gt;</span> <span class='ident'>SceneTransition</span><span class='op'>&lt;</span><span class='ident'>State</span><span class='op'>&gt;</span>
+            <span class='kw'>fn</span> <span class='ident'>tick</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>data</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>State</span>, <span class='ident'>_dt</span>: <span class='ident'>f64</span>) <span class='op'>-&gt;</span> <span class='ident'>SceneTransition</span><span class='op'>&lt;</span><span class='ident'>State</span><span class='op'>&gt;</span>
             {
                 <span class='kw'>if</span> <span class='ident'>data</span>.<span class='ident'>borrow</span>().<span class='ident'>has_been_modified</span> <span class='op'>&gt;</span> <span class='number'>0</span> {
                     <span class='kw'>return</span> <span class='ident'>SceneTransition</span>::<span class='ident'>Pop</span>
@@ -602,12 +678,12 @@
 
         <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>mgr</span>.<span class='ident'>get_scenes</span>().<span class='ident'>len</span>(), <span class='number'>1</span>);
 
-        <span class='kw'>let</span> <span class='ident'>answer</span> <span class='op'>=</span> <span class='ident'>mgr</span>.<span class='ident'>get_scenes_mut</span>().<span class='ident'>last_mut</span>().<span class='ident'>unwrap</span>().<span class='ident'>tick</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>state</span>);
+        <span class='kw'>let</span> <span class='ident'>answer</span> <span class='op'>=</span> <span class='ident'>mgr</span>.<span class='ident'>get_scenes_mut</span>().<span class='ident'>last_mut</span>().<span class='ident'>unwrap</span>().<span class='ident'>tick</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>state</span>, <span class='number'>0.0</span>);
         <span class='ident'>mgr</span>.<span class='ident'>handle_transition</span>(<span class='ident'>answer</span>);
 
         <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>state</span>.<span class='ident'>borrow</span>().<span class='ident'>has_been_modified</span>, <span class='number'>1</span>);
 
-        <span class='kw'>let</span> <span class='ident'>answer</span> <span class='op'>=</span> <span class='ident'>mgr</span>.<span class='ident'>get_scenes_mut</span>().<span class='ident'>last_mut</span>().<span class='ident'>unwrap</span>().<span class='ident'>tick</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>state</span>);
+        <span class='kw'>let</span> <span class='ident'>answer</span> <span class='op'>=</span> <span class='ident'>mgr</span>.<span class='ident'>get_scenes_mut</span>().<span class='ident'>last_mut</span>().<span class='ident'>unwrap</span>().<span class='ident'>tick</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>state</span>, <span class='number'>0.0</span>);
         <span class='ident'>mgr</span>.<span class='ident'>handle_transition</span>(<span class='ident'>answer</span>);
 
         <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>mgr</span>.<span class='ident'>get_scenes</span>().<span class='ident'>len</span>(), <span class='number'>0</span>);
@@ -663,7 +739,7 @@
             <span class='kw'>fn</span> <span class='ident'>leave</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>data</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>State</span>) {
                 <span class='ident'>data</span>.<span class='ident'>borrow_mut</span>().<span class='ident'>has_left</span> <span class='op'>+=</span> <span class='number'>1</span>;
             }
-            <span class='kw'>fn</span> <span class='ident'>tick</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>_data</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>State</span>) <span class='op'>-&gt;</span> <span class='ident'>SceneTransition</span><span class='op'>&lt;</span><span class='ident'>State</span><span class='op'>&gt;</span>
+            <span class='kw'>fn</span> <span class='ident'>tick</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>_data</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>State</span>, <span class='ident'>_dt</span>: <span class='ident'>f64</span>) <span class='op'>-&gt;</span> <span class='ident'>SceneTransition</span><span class='op'>&lt;</span><span class='ident'>State</span><span class='op'>&gt;</span>
             {
                 <span class='ident'>SceneTransition</span>::<span class='ident'>Push</span>(<span class='ident'>Box</span>::<span class='ident'>new</span>(<span class='ident'>TestSceneMenu</span>))
             }
@@ -685,7 +761,7 @@
             <span class='kw'>fn</span> <span class='ident'>leave</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>data</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>State</span>) {
                 <span class='ident'>data</span>.<span class='ident'>borrow_mut</span>().<span class='ident'>has_left</span> <span class='op'>+=</span> <span class='number'>1</span>;
             }
-            <span class='kw'>fn</span> <span class='ident'>tick</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>_data</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>State</span>) <span class='op'>-&gt;</span> <span class='ident'>SceneTransition</span><span class='op'>&lt;</span><span class='ident'>State</span><span class='op'>&gt;</span>
+            <span class='kw'>fn</span> <span class='ident'>tick</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>_data</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>State</span>, <span class='ident'>_dt</span>: <span class='ident'>f64</span>) <span class='op'>-&gt;</span> <span class='ident'>SceneTransition</span><span class='op'>&lt;</span><span class='ident'>State</span><span class='op'>&gt;</span>
             {
                 <span class='ident'>SceneTransition</span>::<span class='ident'>Push</span>(<span class='ident'>Box</span>::<span class='ident'>new</span>(<span class='ident'>TestSceneSubMenu</span>))
             }
@@ -707,7 +783,7 @@
             <span class='kw'>fn</span> <span class='ident'>leave</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>data</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>State</span>) {
                 <span class='ident'>data</span>.<span class='ident'>borrow_mut</span>().<span class='ident'>has_left</span> <span class='op'>+=</span> <span class='number'>1</span>;
             }
-            <span class='kw'>fn</span> <span class='ident'>tick</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>_data</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>State</span>) <span class='op'>-&gt;</span> <span class='ident'>SceneTransition</span><span class='op'>&lt;</span><span class='ident'>State</span><span class='op'>&gt;</span>
+            <span class='kw'>fn</span> <span class='ident'>tick</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>_data</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>State</span>, <span class='ident'>_dt</span>: <span class='ident'>f64</span>) <span class='op'>-&gt;</span> <span class='ident'>SceneTransition</span><span class='op'>&lt;</span><span class='ident'>State</span><span class='op'>&gt;</span>
             {
                 <span class='ident'>SceneTransition</span>::<span class='ident'>PopUntil</span>(<span class='number'>0</span>)
             }
@@ -719,17 +795,17 @@
 
         <span class='ident'>mgr</span>.<span class='ident'>handle_transition</span>(<span class='ident'>SceneTransition</span>::<span class='ident'>Push</span>(<span class='ident'>Box</span>::<span class='ident'>new</span>(<span class='ident'>TestScene</span>)));
 
-        <span class='kw'>let</span> <span class='ident'>answer</span> <span class='op'>=</span> <span class='ident'>mgr</span>.<span class='ident'>get_scenes_mut</span>().<span class='ident'>last_mut</span>().<span class='ident'>unwrap</span>().<span class='ident'>tick</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>state</span>);
+        <span class='kw'>let</span> <span class='ident'>answer</span> <span class='op'>=</span> <span class='ident'>mgr</span>.<span class='ident'>get_scenes_mut</span>().<span class='ident'>last_mut</span>().<span class='ident'>unwrap</span>().<span class='ident'>tick</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>state</span>, <span class='number'>0.0</span>);
         <span class='ident'>mgr</span>.<span class='ident'>handle_transition</span>(<span class='ident'>answer</span>);
 
         <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>mgr</span>.<span class='ident'>get_scenes</span>().<span class='ident'>len</span>(), <span class='number'>2</span>);
 
-        <span class='kw'>let</span> <span class='ident'>answer</span> <span class='op'>=</span> <span class='ident'>mgr</span>.<span class='ident'>get_scenes_mut</span>().<span class='ident'>last_mut</span>().<span class='ident'>unwrap</span>().<span class='ident'>tick</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>state</span>);
+        <span class='kw'>let</span> <span class='ident'>answer</span> <span class='op'>=</span> <span class='ident'>mgr</span>.<span class='ident'>get_scenes_mut</span>().<span class='ident'>last_mut</span>().<span class='ident'>unwrap</span>().<span class='ident'>tick</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>state</span>, <span class='number'>0.0</span>);
         <span class='ident'>mgr</span>.<span class='ident'>handle_transition</span>(<span class='ident'>answer</span>);
 
         <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>mgr</span>.<span class='ident'>get_scenes</span>().<span class='ident'>len</span>(), <span class='number'>3</span>);
 
-        <span class='kw'>let</span> <span class='ident'>answer</span> <span class='op'>=</span> <span class='ident'>mgr</span>.<span class='ident'>get_scenes_mut</span>().<span class='ident'>last_mut</span>().<span class='ident'>unwrap</span>().<span class='ident'>tick</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>state</span>);
+        <span class='kw'>let</span> <span class='ident'>answer</span> <span class='op'>=</span> <span class='ident'>mgr</span>.<span class='ident'>get_scenes_mut</span>().<span class='ident'>last_mut</span>().<span class='ident'>unwrap</span>().<span class='ident'>tick</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>state</span>, <span class='number'>0.0</span>);
         <span class='ident'>mgr</span>.<span class='ident'>handle_transition</span>(<span class='ident'>answer</span>);
 
         <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>mgr</span>.<span class='ident'>get_scenes</span>().<span class='ident'>len</span>(), <span class='number'>1</span>);
