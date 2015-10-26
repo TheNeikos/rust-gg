@@ -6,6 +6,7 @@ pub use glium::glutin::VirtualKeyCode as KeyCode;
 /// An enum allowing us to communicate what state a given Key is at. The `f64`
 /// in each variant tells you since when the key was last pressed. A value of 0
 /// indicating that it has never been pressed.
+#[derive(Copy, Clone)]
 pub enum KeyState {
     /// The key has been pressed _this_ tick
     Pressed(f64),
@@ -29,6 +30,26 @@ pub enum KeyState {
 /// Per default all keys are 'Released'
 pub struct Keys {
     keys: VecMap<KeyState>
+}
+
+impl Keys {
+    /// Gives you the KeyState of a given Key
+    pub fn status(&self, key: KeyCode) -> KeyState {
+        *self.keys.get(&(key as usize)).unwrap_or(&KeyState::NotPressed(0.0))
+    }
+
+    /// A quick way to check if a given key is pressed
+    pub fn pressed(&self, key: KeyCode) -> bool {
+        match self.status(key) {
+            KeyState::Pressed(_)  | KeyState::Held(_) => { true },
+            KeyState::Released(_) | KeyState::NotPressed(_) => { false }
+        }
+    }
+
+    /// A quick way to check if a given key is released
+    pub fn released(&self, key: KeyCode) -> bool {
+        !self.pressed(key)
+    }
 }
 
 /// A StepResult should be returned by the closure given to one of the step
