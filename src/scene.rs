@@ -22,7 +22,7 @@ pub enum SceneTransition<T : Sized> {
 /// display what to draw as well as what should happen with the given input.
 pub trait Scene : HasId {
     /// What kind of state is carried around?
-    type State : Sized;
+    type State : Sized + Clone;
     /// Called everytime this scene becomes the top of the stack
     fn enter(&mut self, _state: &mut Self::State) {}
     /// Called everytime this scene stops being the top of the stack (also
@@ -54,17 +54,21 @@ pub trait SceneManager<T : Sized> {
     fn get_scenes_mut(&mut self) -> &mut Vec<Box<Self::Scene>>;
     /// Make the manager handle a given transition.
     fn handle_transition(&mut self, Self::SceneTransition);
+    /// Update the scene/s
+    fn update(&mut self, dt: f64, keys: &Keys);
+    /// Display the scene/s
+    fn display(&mut self, display: &GlutinFacade);
 }
 
 /// A sample implementation of `SceneManager` can be used as is for a stack
 /// based scene system. The type parameter is the state of the game.
-pub struct StackSceneManager<T : Sized> {
+pub struct StackSceneManager<T : Sized + Clone> {
     /// The scenes inside the manager.
     scenes: Vec<Box<Scene<State=T>>>,
     state: T
 }
 
-impl<T> StackSceneManager<T> {
+impl<T: Clone> StackSceneManager<T> {
     /// Creates a new StackSceneManager. It has nothing in it,
     /// you probably want to use `with_scene`
     pub fn new(state: T) -> StackSceneManager<T> {
@@ -83,7 +87,7 @@ impl<T> StackSceneManager<T> {
     }
 }
 
-impl<T> SceneManager<T> for StackSceneManager<T> where T: Sized {
+impl<T> SceneManager<T> for StackSceneManager<T> where T: Sized + Clone {
     fn get_scenes(&self) -> &Vec<Box<Self::Scene>> {
         return &self.scenes;
     }
