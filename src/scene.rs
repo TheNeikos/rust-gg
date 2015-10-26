@@ -64,6 +64,25 @@ pub struct StackSceneManager<T : Sized> {
     state: T
 }
 
+impl<T> StackSceneManager<T> {
+    /// Creates a new StackSceneManager. It has nothing in it,
+    /// you probably want to use `with_scene`
+    pub fn new(state: T) -> StackSceneManager<T> {
+        StackSceneManager {
+            scenes: Vec::new(),
+            state: state
+        }
+    }
+
+    /// Creates a StackSceneManager with
+    pub fn with_scene(state: T, scene: Box<Scene<State=T>>) -> StackSceneManager<T>
+    {
+        let mut m = StackSceneManager::new(state);
+        m.handle_transition(SceneTransition::Push(scene));
+        m
+    }
+}
+
 impl<T> SceneManager<T> for StackSceneManager<T> where T: Sized {
     fn get_scenes(&self) -> &Vec<Box<Self::Scene>> {
         return &self.scenes;
