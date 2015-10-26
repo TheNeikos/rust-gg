@@ -155,6 +155,21 @@ impl<T> SceneManager<T> for StackSceneManager<T> where T: Sized + Clone {
             }
         }
     }
+
+    fn update(&mut self, dt: f64, keys: &Keys) {
+        let mut state = self.state.clone();
+        self.get_scenes_mut().last_mut()
+            .unwrap().keypress(&mut state, keys);
+        let answer = self.get_scenes_mut().last_mut()
+            .unwrap().tick(&mut state, dt);
+        self.handle_transition(answer);
+    }
+
+    fn display(&mut self, display: &GlutinFacade) {
+        let mut state = self.state.clone();
+        self.get_scenes_mut().last_mut()
+            .unwrap().display(&mut state, display);
+    }
 }
 
 #[cfg(test)]
