@@ -22,7 +22,7 @@ pub enum SceneTransition<T : Sized> {
 /// display what to draw as well as what should happen with the given input.
 pub trait Scene : HasId {
     /// What kind of state is carried around?
-    type State : Sized;
+    type State : Sized + Clone;
     /// Called everytime this scene becomes the top of the stack
     fn enter(&mut self, _state: &mut Self::State) {}
     /// Called everytime this scene stops being the top of the stack (also
@@ -34,7 +34,7 @@ pub trait Scene : HasId {
     /// Called with a display to draw into something
     fn display(&mut self, _state: &mut Self::State, _display: &GlutinFacade) {}
     /// Called to update the state so as to reflect one advancement in time.
-    fn tick(&mut self, _state: &mut Self::State) -> SceneTransition<Self::State>
+    fn tick(&mut self, _state: &mut Self::State, _dt: f64) -> SceneTransition<Self::State>
     {
         SceneTransition::Pop
     }
@@ -54,17 +54,40 @@ pub trait SceneManager<T : Sized> {
     fn get_scenes_mut(&mut self) -> &mut Vec<Box<Self::Scene>>;
     /// Make the manager handle a given transition.
     fn handle_transition(&mut self, Self::SceneTransition);
+    /// Update the scene/s
+    fn update(&mut self, dt: f64, keys: &Keys);
+    /// Display the scene/s
+    fn display(&mut self, display: &GlutinFacade);
 }
 
 /// A sample implementation of `SceneManager` can be used as is for a stack
 /// based scene system. The type parameter is the state of the game.
-pub struct StackSceneManager<T : Sized> {
+pub struct StackSceneManager<T : Sized + Clone> {
     /// The scenes inside the manager.
     scenes: Vec<Box<Scene<State=T>>>,
     state: T
 }
 
-impl<T> SceneManager<T> for StackSceneManager<T> where T: Sized {
+impl<T: Clone> StackSceneManager<T> {
+    /// Creates a new StackSceneManager. It has nothing in it,
+    /// you probably want to use `with_scene`
+    pub fn new(state: T) -> StackSceneManager<T> {
+        StackSceneManager {
+            scenes: Vec::new(),
+            state: state
+        }
+    }
+
+    /// Creates a StackSceneManager with
+    pub fn with_scene(state: T, scene: Box<Scene<State=T>>) -> StackSceneManager<T>
+    {
+        let mut m = StackSceneManager::new(state);
+        m.handle_transition(SceneTransition::Push(scene));
+        m
+    }
+}
+
+impl<T> SceneManager<T> for StackSceneManager<T> where T: Sized + Clone {
     fn get_scenes(&self) -> &Vec<Box<Self::Scene>> {
         return &self.scenes;
     }
@@ -132,6 +155,21 @@ impl<T> SceneManager<T> for StackSceneManager<T> where T: Sized {
             }
         }
     }
+
+    fn update(&mut self, dt: f64, keys: &Keys) {
+        let mut state = self.state.clone();
+        self.get_scenes_mut().last_mut()
+            .unwrap().keypress(&mut state, keys);
+        let answer = self.get_scenes_mut().last_mut()
+            .unwrap().tick(&mut state, dt);
+        self.handle_transition(answer);
+    }
+
+    fn display(&mut self, display: &GlutinFacade) {
+        let mut state = self.state.clone();
+        self.get_scenes_mut().last_mut()
+            .unwrap().display(&mut state, display);
+    }
 }
 
 #[cfg(test)]
@@ -190,7 +228,7 @@ mod test {
             fn leave(&mut self, data: &mut State) {
                 data.borrow_mut().has_left += 1;
             }
-            fn tick(&mut self, data: &mut State) -> SceneTransition<State>
+            fn tick(&mut self, data: &mut State, _dt: f64) -> SceneTransition<State>
             {
                 if data.borrow().has_been_modified > 0 {
                     return SceneTransition::Pop
@@ -208,12 +246,12 @@ mod test {
 
         assert_eq!(mgr.get_scenes().len(), 1);
 
-        let answer = mgr.get_scenes_mut().last_mut().unwrap().tick(&mut state);
+        let answer = mgr.get_scenes_mut().last_mut().unwrap().tick(&mut state, 0.0);
         mgr.handle_transition(answer);
 
         assert_eq!(state.borrow().has_been_modified, 1);
 
-        let answer = mgr.get_scenes_mut().last_mut().unwrap().tick(&mut state);
+        let answer = mgr.get_scenes_mut().last_mut().unwrap().tick(&mut state, 0.0);
         mgr.handle_transition(answer);
 
         assert_eq!(mgr.get_scenes().len(), 0);
@@ -269,7 +307,7 @@ mod test {
             fn leave(&mut self, data: &mut State) {
                 data.borrow_mut().has_left += 1;
             }
-            fn tick(&mut self, _data: &mut State) -> SceneTransition<State>
+            fn tick(&mut self, _data: &mut State, _dt: f64) -> SceneTransition<State>
             {
                 SceneTransition::Push(Box::new(TestSceneMenu))
             }
@@ -291,7 +329,7 @@ mod test {
             fn leave(&mut self, data: &mut State) {
                 data.borrow_mut().has_left += 1;
             }
-            fn tick(&mut self, _data: &mut State) -> SceneTransition<State>
+            fn tick(&mut self, _data: &mut State, _dt: f64) -> SceneTransition<State>
             {
                 SceneTransition::Push(Box::new(TestSceneSubMenu))
             }
@@ -313,7 +351,7 @@ mod test {
             fn leave(&mut self, data: &mut State) {
                 data.borrow_mut().has_left += 1;
             }
-            fn tick(&mut self, _data: &mut State) -> SceneTransition<State>
+            fn tick(&mut self, _data: &mut State, _dt: f64) -> SceneTransition<State>
             {
                 SceneTransition::PopUntil(0)
             }
@@ -325,17 +363,17 @@ mod test {
 
         mgr.handle_transition(SceneTransition::Push(Box::new(TestScene)));
 
-        let answer = mgr.get_scenes_mut().last_mut().unwrap().tick(&mut state);
+        let answer = mgr.get_scenes_mut().last_mut().unwrap().tick(&mut state, 0.0);
         mgr.handle_transition(answer);
 
         assert_eq!(mgr.get_scenes().len(), 2);
 
-        let answer = mgr.get_scenes_mut().last_mut().unwrap().tick(&mut state);
+        let answer = mgr.get_scenes_mut().last_mut().unwrap().tick(&mut state, 0.0);
         mgr.handle_transition(answer);
 
         assert_eq!(mgr.get_scenes().len(), 3);
 
-        let answer = mgr.get_scenes_mut().last_mut().unwrap().tick(&mut state);
+        let answer = mgr.get_scenes_mut().last_mut().unwrap().tick(&mut state, 0.0);
         mgr.handle_transition(answer);
 
         assert_eq!(mgr.get_scenes().len(), 1);

@@ -10,8 +10,7 @@
 
 extern crate glium;
 extern crate time;
-
-use glium::backend::glutin_backend::GlutinFacade;
+extern crate vec_map;
 
 /// The event module
 /// TODO: Expand
@@ -25,10 +24,8 @@ pub mod scene;
 /// TODO: Expand
 pub mod traits;
 
-/// The game object, you give it your initial State and start it off
-pub struct Game<T> {
-    /// Your own state
-    state: T,
-    /// The display handle
-    display: GlutinFacade
-}
+/// Global game related
+/// TODO: Expand
+pub mod game;
+
+pub use game::Game;
